@@ -71,6 +71,8 @@ const GenerateLogo = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    localStorage.removeItem("formData");
+    localStorage.removeItem("currentStep");
   };
 
   return(
