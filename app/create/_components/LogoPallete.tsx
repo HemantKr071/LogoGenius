@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react'
 import { HeadingDesc } from './HeadingDesc'
 import { HandleChangeProps } from './LogoTitle';

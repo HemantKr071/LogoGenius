@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from 'react'
 import { HeadingDesc } from './HeadingDesc'
 import Logos from '@/app/_data/Logos'
