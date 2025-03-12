@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Logo Genius
+
+Logo Genius is an AI-powered logo generation application that helps you create the perfect logo for your business, app, or website in seconds. The application uses advanced AI models to generate logo ideas based on your input and allows you to customize the design to reflect your brand's personality.
+
+## Features
+
+- AI-powered logo generation
+- Customizable logo designs
+- Save and download generated logos
+- User authentication and dashboard
+- Responsive design
+
+## Technologies Used
+
+- Next.js
+- React
+- Tailwind CSS
+- Firebase Firestore
+- Clerk for authentication
+- Axios for API requests
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Before you begin, ensure you have the following installed:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- [Node.js](https://nodejs.org/) (v14 or higher)
+- [Yarn](https://yarnpkg.com/) or npm
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Installation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Clone the repository:
 
-## Learn More
+   ```bash
+   git clone https://github.com/your-username/logo-genius.git
+   cd logo-genius
+2. Install Dependencies
 
-To learn more about Next.js, take a look at the following resources:
+  ```bash
+  npm install
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
