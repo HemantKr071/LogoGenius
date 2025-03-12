@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
         const form = new FormData();
         form.append("prompt", AIPrompt);
 
-        /*const imageResponse = await fetch("https://clipdrop-api.co/text-to-image/v1", {
+        const imageResponse = await fetch("https://clipdrop-api.co/text-to-image/v1", {
             method: "POST",
             headers: {
                 "x-api-key": process.env.CLIPDROP_API_KEY!, // Replace with your API key
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
             console.error("Error saving to Firebase:", err);
         }
 
-        return NextResponse.json({ image: base64imageWithMime });*/
+        return NextResponse.json({ image: base64imageWithMime });
 
     } catch (err) {
         console.error("Error generating logo:", err);
