@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect,Suspense } from "react";
 import { LogoTitle } from "./_components/LogoTitle";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -8,6 +8,7 @@ import { LogoPallete } from "./_components/LogoPallete";
 import { LogoDesign } from "./_components/LogoDesign";
 import { LogoIdea } from "./_components/LogoIdea";
 import PricingModel from "./_components/PricingModel";
+import Loader from "./_components/Loader";
 
 const CreateLogo = () => {
   const [step, setStep] = useState(1);
@@ -72,4 +73,11 @@ const CreateLogo = () => {
   );
 };
 
-export default CreateLogo;
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="w-full flex justify-center items-center"> <Loader/> </div>}>
+      <CreateLogo />
+    </Suspense>
+  );
+}
+
