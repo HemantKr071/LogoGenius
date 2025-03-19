@@ -1,4 +1,3 @@
-"use server";
 
 import { AI_DESIGN_IDEA } from "@/config/AI-Model";
 import { NextRequest, NextResponse } from "next/server";

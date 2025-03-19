@@ -1,16 +1,24 @@
 import { AI_GENERATE_LOGO } from "@/config/AI-Model";
-import axios from "axios";
-import { Firestore, setDoc, doc as firestoreDoc } from "firebase/firestore";
+import OpenAI from "openai";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/config/FireBaseConfig";
 
 export async function POST(req: NextRequest) {
-    const { prompt, title, desc, email } = await req.json();
+    const { prompt, title, desc, email, userCredits } = await req.json();
+
+    // Validate required fields
+    if (!prompt || !title || !desc || !email) {
+        return NextResponse.json(
+            { error: "Missing required fields: title, desc, email, or userCredits" },
+            { status: 400 }
+        );
+    }
 
     try {
         // Generate a text-based AI prompt
         const result = await AI_GENERATE_LOGO.sendMessage(prompt);
-        let AIGenerateLogoPrompt = await result.response.text(); 
+        let AIGenerateLogoPrompt =  result.response.text();
 
         // Remove Markdown code block delimiters if present
         AIGenerateLogoPrompt = AIGenerateLogoPrompt.replace(/```(?:json)?\n?([\s\S]*?)\n?```/g, "$1").trim();
@@ -27,49 +35,67 @@ export async function POST(req: NextRequest) {
 
         let AIPrompt = parsedResponse.prompt;
 
-        // Send the prompt to ClipDrop API for logo generation
-        const form = new FormData();
-        form.append("prompt", AIPrompt);
-
-        const imageResponse = await fetch("https://clipdrop-api.co/text-to-image/v1", {
-            method: "POST",
-            headers: {
-                "x-api-key": process.env.CLIPDROP_API_KEY!, // Replace with your API key
-            },
-            body: form,
+        const client = new OpenAI({
+            baseURL: "https://api.studio.nebius.com/v1/",
+            apiKey: process.env.NEBIUS_API_KEY,
         });
 
-        if (!imageResponse.ok) {
-            throw new Error(`ClipDrop API error: ${imageResponse.status} - ${imageResponse.statusText}`);
-        }
+        const response = await client.images.generate({
+            model: "black-forest-labs/flux-schnell",
+            response_format: "url",
+            prompt: AIPrompt,
+            ...({
+                extra_body: {
+                    response_extension: "webp",
+                    width: 1024,
+                    height: 1024,
+                    num_inference_steps: 4,
+                    negative_prompt: "",
+                    seed: -1,
+                },
+            } as any),
+        });
 
-        // Convert response to base64
-        const buffer = await imageResponse.arrayBuffer();
-        const base64image = Buffer.from(buffer).toString("base64");
-        const base64imageWithMime = `data:image/png;base64,${base64image}`;
-        
-        //console.log("Generated Image:", base64imageWithMime);
+        console.log("Logo Generated", response);
+        const imageUrl = response.data[0].url;
 
         // Save image to Firebase
         try {
-            await setDoc(doc(db, "users", email, "logos", Date.now().toString()), {
-                image: base64imageWithMime,
-                title: title,
-                desc: desc,
-            });
+            const userDocRef = doc(db, "users", email);
+
+            // Retrieve user data
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                const currentCredits = userDocSnap.data()?.credits ?? 0;
+
+                if (currentCredits > 0) {
+                    await setDoc(doc(db, "users", email, "logos", Date.now().toString()), {
+                        image: imageUrl,
+                        title: title,
+                        desc: desc,
+                    });
+
+                    // Update user credits
+                    await updateDoc(userDocRef, {
+                        credits: currentCredits - 1,
+                    });
+
+                    console.log("Logo saved & credits updated in Firebase");
+                } else {
+                    console.warn("User has insufficient credits.");
+                    return NextResponse.json({ error: "Insufficient credits" }, { status: 400 });
+                }
+            } else {
+                console.warn("User not found in Firebase.");
+                return NextResponse.json({ error: "User not found" }, { status: 404 });
+            }
         } catch (err) {
             console.error("Error saving to Firebase:", err);
         }
 
-        return NextResponse.json({ image: base64imageWithMime });
-
+        return NextResponse.json({ image: imageUrl });
     } catch (err) {
         console.error("Error generating logo:", err);
         return NextResponse.json({ error: "Failed to generate logo" }, { status: 500 });
     }
-}
-
-// Helper function for Firestore document reference
-function doc(db: Firestore, collection: string, email: string, subCollection: string, docId: string) {
-    return firestoreDoc(db, collection, email, subCollection, docId);
 }
