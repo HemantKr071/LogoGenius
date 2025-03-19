@@ -65,7 +65,10 @@ const CreateLogo = () => {
             <ArrowLeft /> Previous
           </Button>
         )}
-        <Button onClick={nextStep}>
+        <Button 
+        onClick={nextStep}  
+        disabled={step === 6} 
+        >
           <ArrowRight /> Continue
         </Button>
       </div>

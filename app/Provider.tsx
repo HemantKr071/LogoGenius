@@ -1,11 +1,13 @@
 "use client";
 import axios from 'axios';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import Header from './_components/Header';
 import { useUser } from '@clerk/nextjs';
-
+import { UserDetailContext } from './_context/userDetailContext';
+import { UserDetailContextType } from './_context/userDetailContext';
 
  const Provider = ({children}: {children: ReactNode}) => {
+  const [userDetail,setUserDetail] = useState();
   const {user} = useUser();
 
   const CheckUserAuth = async () => {
@@ -14,6 +16,7 @@ import { useUser } from '@clerk/nextjs';
       userName : user?.fullName,
     })
     console.log(response.data);
+    setUserDetail(response.data);
   }
 
   useEffect(()=> {
@@ -23,8 +26,10 @@ import { useUser } from '@clerk/nextjs';
   
   return (
     <div>
-        <Header/>
-        {children}
+        <UserDetailContext.Provider value={{userDetail, setUserDetail}}>
+          <Header/>
+          {children}
+        </UserDetailContext.Provider>
     </div>
   )
 }
