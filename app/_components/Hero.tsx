@@ -132,7 +132,7 @@ return (
           </div>
         </footer>
         <div className="mt-12 pt-8 border-t border-purple-100 text-center py-10 text-gray-600">
-            <p>© 2024 LogoGenius. All rights reserved.</p>
+            <p>© 2025 LogoGenius. All rights reserved.</p>
         </div>
     </div>
   )
